@@ -1,0 +1,50 @@
+<mat-grid-list cols="2" rowHeight="100px">
+  <mat-grid-tile>
+    <h1>Estudiantes</h1>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-raised-button color="primary" (click)="openDialog()">Nuevo</button>
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-grid-list cols="1" rowHeight="100px">
+  <mat-grid-tile>
+    <mat-form-field class="form-field">
+      <mat-label>Buscar</mat-label>
+      <input matInput type="text" [(ngModel)]="searchValue" />
+      <button
+        mat-button
+        *ngIf="searchValue"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="searchValue = ''"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon *ngIf="!searchValue" matSuffix>search</mat-icon>
+    </mat-form-field>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<mat-grid-list cols="5" rowHeight="1:1.4">
+  <mat-grid-tile *ngFor="let item of iterations">
+    <mat-card class="example-card">
+      <img
+        mat-card-image
+        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+        alt="Photo of a Shiba Inu"
+      />
+      <mat-card-content>
+        <p>
+            Cesar Torres
+        </p>
+        <p>
+          21 año(s) 9 mes(es)  
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="warn" mat-button>Borrar</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
