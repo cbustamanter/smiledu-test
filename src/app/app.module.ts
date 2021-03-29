@@ -13,7 +13,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
@@ -36,6 +36,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatInputModule,
     MatIconModule,
     FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatDialogModule,
     MatSelectModule,
