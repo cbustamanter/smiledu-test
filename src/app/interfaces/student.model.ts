@@ -1,8 +1,9 @@
 export interface Student {
-    name: string,
-    fathLastName: string,
-    mothLastName: string,
-    grado: number,
-    birthDate: Date,
-    picture: string,
+    nid_persona: number,
+    nom_persona: string,
+    ape_pate_pers: string,
+    ape_mate_pers: string,
+    nid_grado: number,    
+    fecha_naci: Date,
+    foto_ruta: string,
 }

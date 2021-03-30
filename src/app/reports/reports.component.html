@@ -1,0 +1,41 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <ng-container matColumnDef="estudiante">
+    <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+    <td mat-cell *matCellDef="let data">{{ data.estudiante }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="grado">
+    <th mat-header-cell *matHeaderCellDef>Grado - Nivel</th>
+    <td mat-cell *matCellDef="let data">{{ data.grado }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="desc_pension">
+    <th mat-header-cell *matHeaderCellDef>Pensión</th>
+    <td mat-cell *matCellDef="let data">{{ data.desc_pension }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="monto">
+    <th mat-header-cell *matHeaderCellDef>Monto</th>
+    <td mat-cell *matCellDef="let data">{{ data.monto }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fecha_vencimiento">
+    <th mat-header-cell *matHeaderCellDef>Fecha vencimiento</th>
+    <td mat-cell *matCellDef="let data">{{ data.fecha_vencimiento }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fecha_pago">
+    <th mat-header-cell *matHeaderCellDef>Fecha de pago</th>
+    <td mat-cell *matCellDef="let data">{{ data.fecha_pago }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="payment_year">
+    <th mat-header-cell *matHeaderCellDef>Año</th>
+    <td mat-cell *matCellDef="let data">{{ data.payment_year }}</td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  
+</table>

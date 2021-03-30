@@ -1,16 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Student } from '../../app/interfaces/student.model';
+import { Grado } from '../../app/interfaces/grado.model';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-export interface DialogData {
-  animal: string;
-  name: string;
-}
+import { Service } from './../shared/service';
+import { DeleteStudentDialogComponent } from '../shared/dialogs/delete-student-dialog/delete-student-dialog.component';
+import { CreateStudentDialogComponent } from '../shared/dialogs/create-student-dialog/create-student-dialog.component';
 
 @Component({
   selector: 'app-students-component',
@@ -19,89 +15,71 @@ export interface DialogData {
 })
 export class StudentsComponentComponent implements OnInit {
   searchValue: string = '';
-  iterations: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  animal: string = '';
-  name: string = '';
 
-  constructor(public dialog: MatDialog) {}
+  public students: Student[] = [];
+
+  public temp_students: Student[] = [];
+
+  constructor(public dialog: MatDialog, private service: Service) {}
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(DialogElementsExampleDialog, {
+    const dialogRef = this.dialog.open(CreateStudentDialogComponent, {
       disableClose: true,
       width: '550px',
-      data: { name: this.name, animal: this.animal },
     });
-
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
-      this.animal = result;
+      this.temp_students.push(result);
     });
   }
 
-  ngOnInit(): void {}
-}
-
-interface Food {
-  value: string;
-  viewValue: string;
-}
-
-@Component({
-  selector: 'dialog-elements-example-dialog',
-  templateUrl: 'dialog-student-component.component.html',
-  styleUrls: ['./students-component.component.scss'],
-})
-export class DialogElementsExampleDialog implements OnInit {
-  foods: Food[] = [
-    { value: 'steak-0', viewValue: 'Steak' },
-    { value: 'pizza-1', viewValue: 'Pizza' },
-    { value: 'tacos-2', viewValue: 'Tacos' },
-  ];
-
-  public studentForm: FormGroup;
-
-  public studentAge: string = 'año(s) mes(es)';
-
-  public maxDate: Date = new Date();
-
-  ngOnInit() {
-    this.studentForm = new FormGroup({
-      name: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(40),
-      ]),
-      fathLastName: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(40),
-      ]),
-      mothLastName: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(40),
-      ]),
-      grado: new FormControl('', [Validators.required]),
-      birthDate: new FormControl(new Date(), [Validators.required]),
-      picture: new FormControl('', []),
+  openDeleteDialog(nid_persona: number): void {
+    const dialogRef = this.dialog.open(DeleteStudentDialogComponent, {
+      disableClose: true,
+      width: '400px',
+      data: { nid_persona: nid_persona },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.temp_students = this.temp_students.filter(
+          (student) => student.nid_persona !== result
+        );
+      }
     });
   }
 
-  public hasError = (controlName: string, errorName: string) => {
-    return this.studentForm.controls[controlName].hasError(errorName);
-  };
+  ngOnInit(): void {
+    this.getStudents();
+  }
 
-  constructor(
-    public dialogRef: MatDialogRef<DialogElementsExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) {}
+  onSearchChange(): void {
+    const searchValue = this.cleanData(this.searchValue);
+    this.temp_students = this.students.filter((student) => {
+      const student_name = this.cleanData(student.nom_persona);
+      const student_fLast = this.cleanData(student.ape_pate_pers);
+      const student_mLast = this.cleanData(student.ape_mate_pers);
+      return (
+        student_name.indexOf(searchValue) > -1 ||
+        student_fLast.indexOf(searchValue) > -1 ||
+        student_mLast.indexOf(searchValue) > -1
+      );
+    });
+  }
 
-  public createStudent = (studentFormValue: any) => {
-    console.log(this.studentForm.valid);
-    if (this.studentForm.valid) {
-      this.executeStudentCreation(studentFormValue);
-    }
+  cleanData(text: string): string {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  private getStudents = async () => {
+    const res = await this.service.get('/api/students');
+    this.students = res;
+    this.temp_students = res;
   };
 
   public calculateAge = (birthDate: Date) => {
-    const diff = Date.now() - birthDate.getTime();
+    const diff = Date.now() - new Date(birthDate).getTime();
     const age_date = new Date(diff);
     const year = age_date.getUTCFullYear();
     const months = age_date.getUTCMonth();
@@ -110,26 +88,4 @@ export class DialogElementsExampleDialog implements OnInit {
     const text_months = months > 1 || months == 0 ? 'meses' : 'mes';
     return `${age} ${text_age} ${months} ${text_months}`;
   };
-
-  changeDOB(event: MatDatepickerInputEvent<Date>) {
-    this.studentAge = this.calculateAge(event.value!!);
-  }
-
-  private executeStudentCreation = (studentFormValue: any) => {
-    let student: Student = {
-      name: studentFormValue.name,
-      fathLastName: studentFormValue.fathLastName,
-      mothLastName: studentFormValue.mothLastName,
-      grado: studentFormValue.grado,
-      birthDate: studentFormValue.birthDate,
-      picture: studentFormValue.picture,
-    };
-
-    console.log(student);
-    console.log(this.calculateAge(student.birthDate));
-  };
-
-  closeDialog(): void {
-    this.dialogRef.close();
-  }
 }
